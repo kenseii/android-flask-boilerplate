@@ -1,0 +1,6 @@
+.idea
+myenv
+*.pyc
+*.db
+client_secrets.json
+google-services.json
