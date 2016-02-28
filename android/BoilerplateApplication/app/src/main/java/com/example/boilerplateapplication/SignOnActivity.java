@@ -100,7 +100,8 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onFailure(Call<AuthToken> call, Throwable t) {
-                Toast.makeText(SignOnActivity.this, "requestAuthToken(): onFailure", Toast.LENGTH_LONG).show();
+                Toast.makeText(SignOnActivity.this,
+                        String.format("Failed to connect to %s", Constants.BASE_URL), Toast.LENGTH_LONG).show();
             }
         });
     }
