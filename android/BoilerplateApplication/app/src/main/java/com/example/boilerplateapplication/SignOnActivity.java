@@ -20,6 +20,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -31,7 +33,6 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
     private static int GOOGLE_RC_SIGN_IN = 1;
     private static final String TAG = SignOnActivity.class.getSimpleName();
     GoogleAuth mGoogleAuthAuth;
-    Prefs mPrefs;
     RetrofitClient.Endpoints mApiService;
 
     @Bind(R.id.sign_in_button)
@@ -39,16 +40,20 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.revoke_access)
     Button revokeAccess;
 
+    @Inject
+    Prefs prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signon);
         ButterKnife.bind(this);
+        ((BoilerplateApplication)getApplication()).getComponent().inject(this);
+
         signInButton.setOnClickListener(this);
         revokeAccess.setOnClickListener(this);
         mGoogleAuthAuth = new GoogleAuth(this);
-        mPrefs = new Prefs(this);
-        mApiService = RetrofitClient.getApiService(mPrefs);
+        mApiService = RetrofitClient.getApiService(prefs);
         checkForExistingAuthTokenAndRedirect();
     }
 
@@ -71,7 +76,7 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
                 String oAuthToken = acct.getIdToken();
-                mPrefs.setDisplayName(acct.getDisplayName());
+                prefs.setDisplayName(acct.getDisplayName());
                 requestAuthToken(oAuthToken);
             } else {
                 Toast.makeText(this, "Sign in failed, please try again",
@@ -89,7 +94,7 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
             public void onResponse(Call<AuthToken> call, Response<AuthToken> response) {
                 AuthToken authToken = response.body();
                 try {
-                    mPrefs.setAuthToken(authToken.getAuthToken());
+                    prefs.setAuthToken(authToken.getAuthToken());
                     startActivity(new Intent(SignOnActivity.this, MainActivity.class));
                     return;
                 } catch (Exception e) {

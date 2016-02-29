@@ -18,6 +18,8 @@ import com.example.boilerplateapplication.REST.POJO.OAuthToken;
 import com.example.boilerplateapplication.REST.RetrofitClient;
 import com.example.boilerplateapplication.Utils.Prefs;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -38,18 +40,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.hit_api)
     Button hitApi;
 
-    private Prefs mPrefs;
+    @Inject
+    Prefs prefs;
+
     RetrofitClient.Endpoints mApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPrefs = new Prefs(this);
+        ((BoilerplateApplication)getApplication()).getComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mApiService = RetrofitClient.getApiService(mPrefs);
-        displayName.setText(mPrefs.getDisplayName());
-        authToken.setText(mPrefs.getAuthToken());
+
+        mApiService = RetrofitClient.getApiService(prefs);
+        displayName.setText(prefs.getDisplayName());
+        authToken.setText(prefs.getAuthToken());
         hitApi.setOnClickListener(this);
         signOut.setOnClickListener(this);
         invalidateAuthToken.setOnClickListener(this);
@@ -93,12 +98,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void signOut() {
-        mPrefs.removeAuthToken();
+        prefs.removeAuthToken();
         startActivity(new Intent(this, SignOnActivity.class));
     }
 
     private void invalidateAuthTokenForDebugging() {
-        mPrefs.setAuthToken("hacker!");
+        prefs.setAuthToken("hacker!");
         Toast.makeText(this, "Auth token invalidated.", Toast.LENGTH_LONG).show();
     }
 }
