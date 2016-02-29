@@ -3,6 +3,7 @@ package com.example.boilerplateapplication;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.boilerplateapplication.REST.RetrofitClient;
 import com.example.boilerplateapplication.Utils.Prefs;
 
 import javax.inject.Singleton;
@@ -32,6 +33,13 @@ public class ApplicationModule {
     @Singleton
     public Prefs providePrefs() {
         return new Prefs(application);
+    }
+
+    @Provides
+    @Singleton
+    public  RetrofitClient.Endpoints provideApi() {
+        // TODO, this might not be the most graceful handling of the prefs here.
+        return RetrofitClient.getApiService(providePrefs());
     }
 
 

@@ -33,7 +33,6 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
     private static int GOOGLE_RC_SIGN_IN = 1;
     private static final String TAG = SignOnActivity.class.getSimpleName();
     GoogleAuth mGoogleAuthAuth;
-    RetrofitClient.Endpoints mApiService;
 
     @Bind(R.id.sign_in_button)
     com.google.android.gms.common.SignInButton signInButton;
@@ -42,6 +41,9 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
 
     @Inject
     Prefs prefs;
+
+    @Inject
+    RetrofitClient.Endpoints api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,6 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
         signInButton.setOnClickListener(this);
         revokeAccess.setOnClickListener(this);
         mGoogleAuthAuth = new GoogleAuth(this);
-        mApiService = RetrofitClient.getApiService(prefs);
         checkForExistingAuthTokenAndRedirect();
     }
 
@@ -88,7 +89,7 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
     private void requestAuthToken(String oAuthToken) {
         OAuthToken o = new OAuthToken();
         o.setOauthToken(oAuthToken);
-        Call<AuthToken> call = mApiService.getAuthToken(o);
+        Call<AuthToken> call = api.getAuthToken(o);
         call.enqueue(new Callback<AuthToken>() {
             @Override
             public void onResponse(Call<AuthToken> call, Response<AuthToken> response) {
@@ -123,7 +124,7 @@ public class SignOnActivity extends AppCompatActivity implements View.OnClickLis
 
     private void checkForExistingAuthTokenAndRedirect() {
         // auth token is automatically injected into the header, so if this succeeds then we are logged in.
-        Call<CheckTokenResponse> call = mApiService.checkToken();
+        Call<CheckTokenResponse> call = api.checkToken();
         call.enqueue(new Callback<CheckTokenResponse>() {
             @Override
             public void onResponse(Call<CheckTokenResponse> call, Response<CheckTokenResponse> response) {

@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Inject
     Prefs prefs;
 
-    RetrofitClient.Endpoints mApiService;
+    @Inject
+    RetrofitClient.Endpoints api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mApiService = RetrofitClient.getApiService(prefs);
         displayName.setText(prefs.getDisplayName());
         authToken.setText(prefs.getAuthToken());
         hitApi.setOnClickListener(this);
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void hitApi() {
-        Call<DemoEndpointResponse> call = mApiService.getDemoEndpoint();
+        Call<DemoEndpointResponse> call = api.getDemoEndpoint();
         call.enqueue(new Callback<DemoEndpointResponse>() {
             @Override
             public void onResponse(Call<DemoEndpointResponse> call, Response<DemoEndpointResponse> response) {
