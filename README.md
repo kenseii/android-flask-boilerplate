@@ -55,13 +55,6 @@ private static int port = 5000;
 cp example.server_client_id.xml android/BoilerplateApplication/app/src/main/res/values/server_client_id.xml
 ```
 
-
-
-
-TODO
-====
-Arguably it is more secure to read the SECRET_KEY from a file rather than the environment, as you can't alway predict when libraries or external programs will accidentally dump the environment to the user.  (Modulo disk access on the system you are deploying to: for example a file based system might be annoying on Heroku)
-
 See Also
 ========
 https://developers.google.com/identity/sign-in/android/start-integrating
